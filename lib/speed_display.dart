@@ -23,7 +23,7 @@ class _SpeedDisplayState extends State<SpeedDisplay> {
   }
 
   void _startLocationUpdates() {
-    _timer = Timer.periodic(Duration(seconds: 1), (Timer timer) async {
+    _timer = Timer.periodic(Duration(seconds: 10), (Timer timer) async {
       await _getLocationData();
       setState(() {}); // Trigger UI update
       _saveLocationData(); // Save location data to SQLite
