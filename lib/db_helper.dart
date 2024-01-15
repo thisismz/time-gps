@@ -59,14 +59,27 @@ class DBHelper {
 
     String csvContent = const ListToCsvConverter().convert(csvData);
 
-    // Add dialog to select path
-    Directory appDocumentsDirectory = await getApplicationDocumentsDirectory();
 
-    String csvPath = '${appDocumentsDirectory.path}/location.csv';
-    print(appDocumentsDirectory.path);
-    //String csvPath = '${appDocumentsDirectory.path}/$table.csv';
+    // // Add dialog to select path
+    // Directory appDocumentsDirectory = await getApplicationDocumentsDirectory();
+    // String csvPath = '${appDocumentsDirectory.path}/location.csv';
+    // print(appDocumentsDirectory.path);
+    // //String csvPath = '${appDocumentsDirectory.path}/$table.csv';
+    // File csvFile = File(csvPath);
 
+    // Use FilePicker to select a directory
+    String? selectedDirectory = await getDirectoryPath();
+    if (selectedDirectory == null) {
+      print('Directory not selected.');
+    }
+    int timestamp = DateTime.now().millisecondsSinceEpoch;
+    // Create a timestamp for the CSV file name
+    //String timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
+
+    String csvPath = '$selectedDirectory/location_$timestamp.csv';
     File csvFile = File(csvPath);
+
+    await csvFile.writeAsString(csvContent);
     var file = await csvFile.writeAsString(csvContent);
     if(await csvFile.exists()) {
       print('File exists at path: ${csvFile.path}');
@@ -83,4 +96,14 @@ Future<String?> getDirectoryPath() async {
     initialDirectory: directory?.path,
   );
   return selectedDirectory;
+}
+String timeOfDayToRFC3339() {
+  // Get the current date
+  final now = DateTime.now();
+  // Create a DateTime object with the same date and the given time
+  final dateTime = DateTime(now.year, now.month, now.day, now.hour, now.minute);
+  // Convert the DateTime object to UTC and then to ISO 8601 format
+  final rfc3339 = dateTime.toUtc().toIso8601String();
+  // Return the formatted string
+  return rfc3339;
 }
